@@ -1,0 +1,570 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letter</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=Caveat:wght@500;600&display=swap');
+
+:root {
+    --ink: #493b3b;
+    --rose: #bd777d;
+    --paper: #fffaf0;
+    --bg: #f5e9e5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: radial-gradient(circle at 20% 20%, #fff8f1 0, transparent 32%),
+    linear-gradient(135deg, #f4e5e1, #ead3d0);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+}
+
+.wrap {
+    width: min(100%, 760px);
+    text-align: center;
+}
+
+.eyebrow {
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #9c6e70;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font: 600 clamp(32px, 6vw, 52px) 'Playfair Display', serif;
+    margin: 0 0 10px;
+}
+
+.sub {
+    color: #876f6d;
+    font-size: 14px;
+    margin: 0 0 32px;
+}
+
+/* AMPLOP */
+
+.scene {
+    height: 340px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    perspective: 1000px;
+}
+
+.envelope {
+    width: min(420px, 88vw);
+    height: 255px;
+    position: relative;
+    filter: drop-shadow(0 18px 18px #8d666633);
+    transition: transform .35s;
+}
+
+.env-back {
+    position: absolute;
+    inset: 0;
+    background: #dca9a5;
+    border-radius: 9px;
+}
+
+/* KERTAS DI DALAM AMPLOP */
+
+.letter {
+    position: absolute;
+    width: 84%;
+    height: 220px;
+    left: 8%;
+    top: 15px;
+    background: var(--paper);
+    border-radius: 4px;
+    z-index: 2;
+    padding: 22px 18px;
+    transition: transform 1s cubic-bezier(.2,.8,.2,1), height .6s;
+    box-shadow: 0 3px 12px #70534a18;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.letter .mini {
+    font: 600 23px 'Playfair Display', serif;
+    color: #9b6268;
+}
+
+.letter .mini-line {
+    height: 1px;
+    width: 42px;
+    background: #d8b6a9;
+    margin: 12px;
+}
+
+.letter .mini-text {
+    font: 18px 'Caveat', cursive;
+    color: #9a7770;
+}
+
+/* BAGIAN DEPAN AMPLOP */
+
+.front {
+    position: absolute;
+    inset: 0;
+    background: #e8b9b1;
+    clip-path: polygon(0 0, 50% 57%, 100% 0, 100% 100%, 0 100%);
+    z-index: 4;
+    border-radius: 0 0 9px 9px;
+}
+
+/* PENUTUP AMPLOP */
+
+.flap {
+    position: absolute;
+    inset: 0;
+    background: #d69c9b;
+    clip-path: polygon(0 0, 100% 0, 50% 59%);
+    transform-origin: top;
+    transition: transform .7s;
+    z-index: 5;
+    border-radius: 8px 8px 0 0;
+}
+
+/* SEGEL HATI */
+
+.seal {
+    position: absolute;
+    z-index: 6;
+    left: 50%;
+    top: 56%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #a95763;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font: 22px 'Playfair Display', serif;
+    box-shadow: 0 3px 8px #79424a44;
+    transition: opacity .3s;
+}
+
+/* ANIMASI AMPLOP */
+
+.open .flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.open .seal {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.open .letter {
+    transform: translateY(-145px);
+    height: 250px;
+}
+
+/* TOMBOL */
+
+.hint {
+    font-size: 13px;
+    color: #967a76;
+    margin-top: 8px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+button {
+    border: 0;
+    border-radius: 999px;
+    padding: 13px 23px;
+    font: 600 13px 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.primary {
+    background: #a95f69;
+    color: white;
+    box-shadow: 0 7px 16px #a95f6930;
+}
+
+.primary:hover {
+    background: #914d58;
+    transform: translateY(-2px);
+}
+
+.secondary {
+    background: #ffffffa8;
+    color: #805c5c;
+    border: 1px solid #d9bdb7;
+}
+
+/* ISI SURAT */
+
+.message {
+    display: none;
+    max-width: 590px;
+    margin: 8px auto 0;
+    background: var(--paper);
+    padding: clamp(24px, 5vw, 42px);
+    border-radius: 5px;
+    box-shadow: 0 15px 45px #795b4a20;
+    text-align: left;
+    position: relative;
+    animation: rise .7s ease both;
+}
+
+.message:before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border: 1px solid #eadbd0;
+    pointer-events: none;
+}
+
+.message h2 {
+    font: 600 27px 'Playfair Display', serif;
+    text-align: center;
+    margin: 0 0 5px;
+    color: #9b6268;
+}
+
+.date {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #ad8c83;
+    margin-bottom: 24px;
+}
+
+.message p {
+    font: 19px/1.75 'Caveat', cursive;
+    color: #66514b;
+    margin: 0 0 14px;
+    white-space: pre-line;
+}
+
+.sign {
+    font: 22px 'Caveat', cursive;
+    text-align: right;
+    color: #9b6268;
+    margin-top: 24px;
+}
+
+/* TAMPILKAN SURAT */
+
+.show .message {
+    display: block;
+}
+
+.show .scene,
+.show .hint {
+    display: none;
+}
+
+/* ANIMASI KERTAS */
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* FOOTER */
+
+footer {
+    margin-top: 32px;
+    color: #a1847e;
+    font-size: 11px;
+    letter-spacing: .08em;
+}
+
+/* RESPONSIVE HP */
+
+@media(max-width: 480px) {
+    .scene {
+        height: 290px;
+    }
+
+    .envelope {
+        height: 215px;
+    }
+
+    .open .letter {
+        transform: translateY(-120px);
+    }
+
+    .message p {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 18px 12px;
+        place-items: start center;
+    }
+
+    .wrap {
+        width: 100%;
+        padding-top: 24px;
+    }
+
+    h1 {
+        font-size: clamp(27px, 8vw, 36px);
+    }
+
+    .scene {
+        height: 270px;
+    }
+
+    .envelope {
+        width: min(340px, 88vw);
+        height: 200px;
+    }
+
+    .open .letter {
+        transform: translateY(-105px);
+        height: 220px;
+    }
+
+    .message {
+        width: 100%;
+        padding: 30px 25px;
+    }
+
+    .message p {
+        font-size: 21px;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+    }
+
+    button {
+        min-height: 44px;
+    }
+    /* Memperbaiki kertas yang keluar dari amplop */
+    .letter {
+        height: calc(100% - 30px);
+        top: 15px;
+        overflow: hidden;
+    }
+
+    /* Saat amplop dibuka */
+    .open .letter {
+        height: 220px;
+        transform: translateY(-105px);
+        overflow: visible;
+}
+}
+
+@media (max-width: 360px) {
+    .message {
+        padding: 26px 20px;
+    }
+
+    .message p {
+        font-size: 19px;
+    }
+
+    .envelope {
+        width: 86vw;
+    }
+    .letter {
+    height: calc(100% - 30px);
+    }
+
+    .open .letter {
+        height: 205px;
+        transform: translateY(-90px);
+    }
+}
+
+
+</style>
+</head>
+
+<body>
+
+<main class="wrap" id="app">
+
+    <div class="eyebrow">
+        A little something for you
+    </div>
+
+    <h1>Alyan sent you a letter</h1>
+
+    <p class="sub">
+        There is a message that someone wants to convey to you.
+    </p>
+
+    <!-- AMPLOP SURAT -->
+
+    <section class="scene">
+
+        <div class="envelope" id="envelope">
+
+            <div class="env-back"></div>
+
+            <div class="letter">
+                <div class="mini">For You</div>
+                <div class="mini-line"></div>
+                <div class="mini-text">
+                    with love & warmth
+                </div>
+            </div>
+
+            <div class="front"></div>
+
+            <div class="flap"></div>
+
+            <div class="seal">♡</div>
+
+        </div>
+
+    </section>
+
+    <div class="hint" id="hint">
+         Press the button below to open the letter ♡
+    </div>
+
+    <!-- TOMBOL BUKA DAN TUTUP -->
+
+    <div class="controls">
+
+        <button class="primary" id="openBtn">
+            Open Letter ♡
+        </button>
+
+        <button class="secondary" id="closeBtn" hidden>
+            Close Letter
+        </button>
+
+    </div>
+
+    <!-- ISI SURAT -->
+
+    <article class="message" id="message">
+
+        <h2>For You</h2>
+
+        <div class="date">
+            A note from the heart
+        </div>
+
+        <p>Haii, Sayangg!
+
+    This letter might be simple, and the words within it nothing particularly extraordinary, but thank you for being a part of my story.
+
+I always pray that your days are filled with good things. If, at some point, the world feels exhausting, remember how far you’ve come that is something to be proud of.
+
+Don't forget to smile, take good care of yourself, and keep believing that beautiful things are waiting for you ahead.
+
+I want to apologize to you if, during the time you’ve been with me, you haven’t found what you needed from me.
+
+I also apologize if I’ve been acting out or overreacting; I never intended to make you angry or annoyed.
+
+And the reason I keep asking if we could get on a call even if we just sit in silence is actually my way of feeling your presence after a truly exhausting day. But I know that I’m not the only one who’s tired; you’re even more exhausted than I am, and you’re dealing with your own set of challenges, so I would never force you.
+
+But most importantly, I just want us to stay connected—I don’t want us to be apart for too long. To be honest, sometimes I feel a bit envious of the people around you; they get to communicate with you constantly, while I have to wait not that I can’t wait; of course I can it’s just that there’s something that keeps going through my mind. I hope you understand.
+
+I hope that after reading this letter, you don’t end up thinking that I’m being excessive or that I’m unable to understand your situation. And if you feel that I’m truly not enough for you, please just let me know.</p>
+
+        <div class="sign">
+            With warm wishes, Alyan ♡
+        </div>
+
+    </article>
+
+    <footer>
+        made with ♡ this letter is just for you
+    </footer>
+
+</main>
+
+<script>
+
+// MENGAMBIL ELEMEN HTML
+
+const app = document.getElementById('app');
+
+const envelope = document.getElementById('envelope');
+
+const openBtn = document.getElementById('openBtn');
+
+const closeBtn = document.getElementById('closeBtn');
+
+const hint = document.getElementById('hint');
+
+
+// FUNGSI MEMBUKA SURAT
+
+function openLetter() {
+
+    envelope.classList.add('open');
+
+    app.classList.add('show');
+
+    openBtn.hidden = true;
+
+    closeBtn.hidden = false;
+
+    hint.hidden = true;
+
+}
+
+
+// FUNGSI MENUTUP SURAT
+
+function closeLetter() {
+
+    app.classList.remove('show');
+
+    envelope.classList.remove('open');
+
+    openBtn.hidden = false;
+
+    closeBtn.hidden = true;
+
+    hint.hidden = false;
+
+}
+
+
+openBtn.addEventListener('click', openLetter);
+
+closeBtn.addEventListener('click', closeLetter);
+
+</script>
+
+</body>
+</html>
